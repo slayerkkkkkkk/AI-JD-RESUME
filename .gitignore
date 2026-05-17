@@ -4,3 +4,4 @@ __pycache__/
 resume_ai/
 data/
 *.log
+.streamlit/secrets.toml

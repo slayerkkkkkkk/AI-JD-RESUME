@@ -1,7 +1,12 @@
 import chromadb
 import os
 
-CHROMA_PATH = os.path.join(os.path.dirname(__file__), "data", "chromadb")
+# On Render (cloud), persist to /tmp — locally persist to data/chromadb
+if os.environ.get("RENDER") == "true":
+    CHROMA_PATH = "/tmp/chromadb"
+else:
+    CHROMA_PATH = os.path.join(os.path.dirname(__file__), "data", "chromadb")
+
 os.makedirs(CHROMA_PATH, exist_ok=True)
 
 chroma_client = chromadb.PersistentClient(path=CHROMA_PATH)

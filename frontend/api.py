@@ -1,10 +1,15 @@
 import os
 import requests
 from dotenv import load_dotenv
+import streamlit as st
 
 load_dotenv()
 
-BASE_URL = os.getenv("API_BASE_URL", "http://127.0.0.1:8000")
+# On Streamlit Cloud, read from st.secrets; locally fall back to .env
+try:
+    BASE_URL = st.secrets["API_BASE_URL"]
+except Exception:
+    BASE_URL = os.getenv("API_BASE_URL", "http://127.0.0.1:8000")
 
 def signup(email, password):
     return requests.post(

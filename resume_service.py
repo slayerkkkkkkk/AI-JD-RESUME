@@ -9,8 +9,21 @@ from embedding import generate_embedding
 from llm_parser import parse_resume
 from utils import extract_text, clean_text
 
-RAW_DIR = "data/raw_resumes"
-PROCESSED_DIR = "data/processed_resumes"
+import tempfile
+
+# On Render (cloud), use /tmp which is always writable.
+# Locally, use data/ folders for persistence.
+_IS_CLOUD = os.environ.get("RENDER") == "true"
+
+if _IS_CLOUD:
+    RAW_DIR = "/tmp/raw_resumes"
+    PROCESSED_DIR = "/tmp/processed_resumes"
+else:
+    RAW_DIR = "data/raw_resumes"
+    PROCESSED_DIR = "data/processed_resumes"
+
+os.makedirs(RAW_DIR, exist_ok=True)
+os.makedirs(PROCESSED_DIR, exist_ok=True)
 
 # ======================= HELPERS =======================
 
