@@ -92,20 +92,38 @@ REFRESH_TOKEN_EXPIRE_DAYS=7
 
 > MongoDB must be running locally. Download from [mongodb.com](https://www.mongodb.com/try/download/community).
 
-### 3. Create data directories
+### 3. Install MongoDB
+
+Download and install from [mongodb.com/try/download/community](https://www.mongodb.com/try/download/community).
+
+After installing, MongoDB's `bin` folder may not be on your PATH. If `mongod` is not recognized, find it and run it directly:
+
+```powershell
+# Windows — find and run mongod
+& "C:\Program Files\MongoDB\Server\8.2\bin\mongod.exe"
+```
+
+To fix `mongod` permanently, add `C:\Program Files\MongoDB\Server\8.2\bin` to your system PATH via **System Properties → Environment Variables**.
+
+### 4. Create data directories
 
 ```bash
 mkdir -p data/raw_resumes data/processed_resumes data/chromadb
 ```
 
-### 4. Start the backend
+### 5. Run the project (3 terminals)
 
+**Terminal 1 — MongoDB:**
+```powershell
+& "C:\Program Files\MongoDB\Server\8.2\bin\mongod.exe"
+```
+
+**Terminal 2 — Backend:**
 ```bash
 python -m uvicorn main:app --reload --port 8000
 ```
 
-### 5. Start the frontend
-
+**Terminal 3 — Frontend:**
 ```bash
 python -m streamlit run app.py
 ```
