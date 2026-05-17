@@ -11,9 +11,7 @@ DB_NAME = os.getenv("DB_NAME", "AI_Resume")
 EMBEDDING_MODEL = "text-embedding-3-large"
 PRIVATE_TTL_DAYS = 7
 
-JWT_SECRET = os.getenv("JWT_SECRET")
-if not JWT_SECRET:
-    raise RuntimeError("JWT_SECRET is not set")
+JWT_SECRET = os.getenv("JWT_SECRET", "dev-secret-change-in-production")
 
 JWT_ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
 

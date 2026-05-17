@@ -1,7 +1,10 @@
+import os
 import requests
+from dotenv import load_dotenv
 
-#BASE_URL = "http://127.0.0.1:8000"
-BASE_URL="https://resume-jd1-gxf7g9hmiew2ren3rrit7.streamlit.app"
+load_dotenv()
+
+BASE_URL = os.getenv("API_BASE_URL", "http://127.0.0.1:8000")
 
 def signup(email, password):
     return requests.post(
@@ -25,6 +28,14 @@ def upload_resumes(files, company, visibility, token):
         data=data,
         headers=headers
     )
+
+def get_resumes(token):
+    headers = {"Authorization": f"Bearer {token}"}
+    return requests.get(f"{BASE_URL}/resumes/list", headers=headers)
+
+def get_stats(token):
+    headers = {"Authorization": f"Bearer {token}"}
+    return requests.get(f"{BASE_URL}/resumes/stats", headers=headers)
 
 def match_jd(jd_text, company, token):
     headers = {"Authorization": f"Bearer {token}"}

@@ -35,8 +35,8 @@ def upload_resumes_service(
     if visibility not in {"public", "private"}:
         raise ValueError("visibility must be 'public' or 'private'")
 
-    if visibility == "private" and (not company or not recruiter_id):
-        raise ValueError("Private resumes require company and recruiter_id")
+    if visibility == "private" and not company:
+        raise ValueError("Private resumes require a company name")
 
     results = []
 

@@ -2,3 +2,5 @@
 __pycache__/
 *.pyc
 resume_ai/
+data/
+*.log

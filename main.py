@@ -32,12 +32,21 @@
         
 #     )
 
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from resume_routes import router as resume_router
 from jd_routes import router as jd_router
 from auth_routes import router as auth_router
+from database import ensure_indexes
 
-app = FastAPI(title="AI ATS Resume Matcher")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    ensure_indexes()
+    yield
+
+
+app = FastAPI(title="AI ATS Resume Matcher", lifespan=lifespan)
 
 app.include_router(auth_router)
 app.include_router(resume_router)

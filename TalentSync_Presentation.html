@@ -1,0 +1,1646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TalentSync – AI-Powered ATS Presentation</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap');
+
+:root {
+  --teal: #14b8a6;
+  --cyan: #0ea5e9;
+  --navy: #020617;
+  --navy2: #0f172a;
+  --navy3: #1e293b;
+  --text: #e2e8f0;
+  --muted: #94a3b8;
+  --grad: linear-gradient(135deg, #14b8a6, #0ea5e9);
+  --grad2: linear-gradient(135deg, #020617, #0f172a);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--navy);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+}
+
+.progress-bar {
+  position: fixed;
+  top: 0; left: 0;
+  height: 3px;
+  background: var(--grad);
+  transition: width 0.4s ease;
+  z-index: 1000;
+  box-shadow: 0 0 10px #14b8a6;
+}
+
+.slide-deck {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 48px 64px 80px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.5s ease;
+  overflow: hidden;
+}
+
+.slide.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.slide.active .animate-in {
+  animation: fadeUp 0.7s ease-out forwards;
+}
+
+.slide.active .animate-in:nth-child(1) { animation-delay: 0.1s; }
+.slide.active .animate-in:nth-child(2) { animation-delay: 0.25s; }
+.slide.active .animate-in:nth-child(3) { animation-delay: 0.4s; }
+.slide.active .animate-in:nth-child(4) { animation-delay: 0.55s; }
+.slide.active .animate-in:nth-child(5) { animation-delay: 0.7s; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(20,184,166,0.3); }
+  50% { box-shadow: 0 0 40px rgba(20,184,166,0.6); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.grad-text {
+  background: var(--grad);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.slide-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--teal);
+  margin-bottom: 8px;
+  opacity: 0;
+}
+
+.tag {
+  display: inline-block;
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid rgba(20,184,166,0.4);
+  color: var(--teal);
+  background: rgba(20,184,166,0.08);
+}
+
+/* NAV */
+.nav-controls {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  z-index: 1000;
+  background: rgba(15,23,42,0.8);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(20,184,166,0.2);
+  border-radius: 40px;
+  padding: 8px 20px;
+}
+
+.nav-btn {
+  background: rgba(20,184,166,0.15);
+  border: 1px solid rgba(20,184,166,0.3);
+  color: var(--teal);
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.2s;
+  display: flex; align-items: center; justify-content: center;
+}
+.nav-btn:hover { background: rgba(20,184,166,0.35); transform: scale(1.1); }
+.slide-counter { color: var(--muted); font-size: 13px; font-weight: 500; min-width: 48px; text-align: center; }
+
+/* ========== SLIDE 1 – HERO ========== */
+.s1 { background: var(--navy); }
+.s1-bg {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% 40%, rgba(20,184,166,0.12) 0%, transparent 70%),
+              radial-gradient(ellipse 60% 40% at 80% 20%, rgba(14,165,233,0.08) 0%, transparent 60%);
+}
+.s1-grid {
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(rgba(20,184,166,0.04) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(20,184,166,0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+.hero-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(36px, 5.5vw, 76px);
+  font-weight: 800;
+  line-height: 1.05;
+  text-align: center;
+  background: linear-gradient(135deg, #fff 0%, #14b8a6 50%, #0ea5e9 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero-sub {
+  font-size: clamp(14px, 1.8vw, 20px);
+  color: var(--muted);
+  max-width: 640px;
+  text-align: center;
+  line-height: 1.6;
+}
+.hero-badges {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.badge {
+  padding: 8px 18px;
+  border-radius: 24px;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid rgba(20,184,166,0.35);
+  background: rgba(20,184,166,0.08);
+  color: var(--teal);
+  backdrop-filter: blur(4px);
+}
+.badge.cyan { border-color: rgba(14,165,233,0.35); background: rgba(14,165,233,0.08); color: var(--cyan); }
+.floating-cards {
+  display: flex;
+  gap: 16px;
+  margin-top: 8px;
+}
+.mini-card {
+  background: rgba(15,23,42,0.8);
+  border: 1px solid rgba(20,184,166,0.2);
+  border-radius: 12px;
+  padding: 14px 18px;
+  font-size: 12px;
+  color: var(--muted);
+  animation: float 3s ease-in-out infinite;
+  backdrop-filter: blur(8px);
+}
+.mini-card:nth-child(2) { animation-delay: 0.5s; }
+.mini-card:nth-child(3) { animation-delay: 1s; }
+.mini-card .mc-name { color: var(--text); font-weight: 600; font-size: 13px; margin-bottom: 4px; }
+.mc-score { color: var(--teal); font-weight: 700; }
+.brain-icon {
+  font-size: 72px;
+  animation: float 4s ease-in-out infinite;
+  filter: drop-shadow(0 0 30px rgba(20,184,166,0.5));
+}
+
+/* ========== SLIDE 2 – PROBLEM ========== */
+.s2 { background: linear-gradient(135deg, #020617, #0d0f1a); }
+.problem-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  width: 100%;
+  max-width: 900px;
+}
+.problem-card {
+  background: rgba(15,23,42,0.7);
+  border: 1px solid rgba(239,68,68,0.25);
+  border-radius: 14px;
+  padding: 20px 22px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  transition: all 0.3s;
+}
+.problem-card:hover { border-color: rgba(239,68,68,0.5); transform: translateY(-2px); }
+.prob-icon { font-size: 28px; flex-shrink: 0; }
+.prob-title { font-weight: 700; font-size: 14px; color: #f87171; margin-bottom: 4px; }
+.prob-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+/* ========== SLIDE 3 – OBJECTIVES ========== */
+.s3 { background: linear-gradient(135deg, #020617, #071a14); }
+.obj-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  max-width: 800px;
+}
+.obj-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: rgba(20,184,166,0.06);
+  border: 1px solid rgba(20,184,166,0.15);
+  border-radius: 12px;
+  padding: 16px 20px;
+  transition: all 0.3s;
+}
+.obj-item:hover { background: rgba(20,184,166,0.12); border-color: rgba(20,184,166,0.35); }
+.obj-num {
+  width: 36px; height: 36px;
+  background: var(--grad);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 14px; color: #fff; flex-shrink: 0;
+}
+.obj-text { font-size: 15px; font-weight: 500; color: var(--text); }
+
+/* ========== SLIDE 4 – SOLUTION FLOWCHART ========== */
+.s4 { background: var(--navy); }
+.flow-row {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex-wrap: nowrap;
+  width: 100%;
+  max-width: 960px;
+  overflow-x: auto;
+}
+.flow-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 90px;
+}
+.flow-box {
+  background: rgba(15,23,42,0.9);
+  border: 1px solid rgba(20,184,166,0.3);
+  border-radius: 12px;
+  padding: 14px 10px;
+  text-align: center;
+  width: 100%;
+  transition: all 0.3s;
+  position: relative;
+}
+.flow-box:hover { border-color: var(--teal); box-shadow: 0 0 20px rgba(20,184,166,0.2); }
+.flow-icon { font-size: 24px; margin-bottom: 6px; }
+.flow-name { font-size: 11px; font-weight: 700; color: var(--teal); text-transform: uppercase; letter-spacing: 0.5px; }
+.flow-desc { font-size: 10px; color: var(--muted); margin-top: 3px; }
+.flow-arrow {
+  font-size: 20px;
+  color: var(--teal);
+  flex-shrink: 0;
+  padding: 0 4px;
+  opacity: 0.7;
+}
+.flow-badges {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+/* ========== SLIDE 5 – ARCHITECTURE ========== */
+.s5 { background: linear-gradient(135deg, #020617, #0a0f1e); }
+.arch-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 14px;
+  width: 100%;
+  max-width: 960px;
+}
+.arch-layer {
+  border-radius: 16px;
+  padding: 20px 24px;
+  border: 1px solid;
+  position: relative;
+  overflow: hidden;
+}
+.arch-layer::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  border-radius: 16px 16px 0 0;
+}
+.layer-fe { border-color: rgba(20,184,166,0.35); background: rgba(20,184,166,0.06); }
+.layer-fe::before { background: var(--teal); }
+.layer-be { border-color: rgba(14,165,233,0.35); background: rgba(14,165,233,0.06); }
+.layer-be::before { background: var(--cyan); }
+.layer-db { border-color: rgba(168,85,247,0.35); background: rgba(168,85,247,0.06); }
+.layer-db::before { background: #a855f7; }
+.layer-ai { border-color: rgba(251,146,60,0.35); background: rgba(251,146,60,0.06); }
+.layer-ai::before { background: #fb923c; }
+.arch-layer-title { font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; }
+.layer-fe .arch-layer-title { color: var(--teal); }
+.layer-be .arch-layer-title { color: var(--cyan); }
+.layer-db .arch-layer-title { color: #a855f7; }
+.layer-ai .arch-layer-title { color: #fb923c; }
+.arch-items { display: flex; flex-wrap: wrap; gap: 8px; }
+.arch-item {
+  font-size: 12px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+.layer-fe .arch-item { background: rgba(20,184,166,0.12); color: var(--teal); }
+.layer-be .arch-item { background: rgba(14,165,233,0.12); color: var(--cyan); }
+.layer-db .arch-item { background: rgba(168,85,247,0.12); color: #a855f7; }
+.layer-ai .arch-item { background: rgba(251,146,60,0.12); color: #fb923c; }
+.arch-port { font-size: 10px; color: var(--muted); margin-top: 8px; }
+
+/* ========== SLIDE 6 – TECH STACK ========== */
+.s6 { background: linear-gradient(135deg, #020617, #0a0617); }
+.tech-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  width: 100%;
+  max-width: 960px;
+}
+.tech-card {
+  background: rgba(15,23,42,0.8);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  padding: 18px 14px;
+  text-align: center;
+  transition: all 0.3s;
+  cursor: default;
+}
+.tech-card:hover { transform: translateY(-4px); border-color: rgba(20,184,166,0.4); box-shadow: 0 8px 30px rgba(20,184,166,0.15); }
+.tech-icon { font-size: 32px; margin-bottom: 10px; }
+.tech-name { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.tech-desc { font-size: 11px; color: var(--muted); line-height: 1.4; }
+.tech-tag { font-size: 10px; color: var(--teal); font-weight: 600; margin-top: 6px; font-family: 'Fira Code', monospace; }
+
+/* ========== SLIDE 7 – METHODOLOGY ========== */
+.s7 { background: var(--navy); }
+.method-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  width: 100%;
+  max-width: 900px;
+}
+.method-step {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  background: rgba(15,23,42,0.6);
+  border: 1px solid rgba(20,184,166,0.12);
+  border-radius: 12px;
+  padding: 14px 16px;
+  transition: all 0.3s;
+}
+.method-step:hover { border-color: rgba(20,184,166,0.35); background: rgba(20,184,166,0.05); }
+.step-num {
+  width: 32px; height: 32px; flex-shrink: 0;
+  background: var(--grad);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 13px; color: #fff;
+}
+.step-title { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+.step-desc { font-size: 11px; color: var(--muted); line-height: 1.5; }
+.code-pill {
+  display: inline-block;
+  background: rgba(20,184,166,0.1);
+  border: 1px solid rgba(20,184,166,0.2);
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-family: 'Fira Code', monospace;
+  font-size: 10px;
+  color: var(--teal);
+  margin-top: 4px;
+}
+
+/* ========== SLIDE 8 – FEATURES ========== */
+.s8 { background: linear-gradient(135deg, #020617, #071a14); }
+.feat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  width: 100%;
+  max-width: 960px;
+}
+.feat-card {
+  background: rgba(15,23,42,0.7);
+  border: 1px solid rgba(20,184,166,0.15);
+  border-radius: 14px;
+  padding: 18px 14px;
+  text-align: center;
+  transition: all 0.3s;
+  animation: pulse-glow 4s ease-in-out infinite;
+}
+.feat-card:nth-child(even) { animation-delay: 2s; }
+.feat-card:hover { transform: translateY(-4px) scale(1.02); border-color: var(--teal); }
+.feat-icon { font-size: 28px; margin-bottom: 8px; }
+.feat-title { font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.feat-desc { font-size: 10px; color: var(--muted); line-height: 1.5; }
+
+/* ========== SLIDE 9 – DEMO UI ========== */
+.s9 { background: linear-gradient(135deg, #020617, #0a0f1e); }
+.ui-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  width: 100%;
+  max-width: 960px;
+}
+.ui-mockup {
+  background: rgba(15,23,42,0.9);
+  border: 1px solid rgba(20,184,166,0.25);
+  border-radius: 14px;
+  overflow: hidden;
+  transition: all 0.3s;
+}
+.ui-mockup:hover { border-color: var(--teal); transform: scale(1.01); box-shadow: 0 0 30px rgba(20,184,166,0.15); }
+.ui-titlebar {
+  background: rgba(20,184,166,0.1);
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-bottom: 1px solid rgba(20,184,166,0.15);
+}
+.ui-dot { width: 8px; height: 8px; border-radius: 50%; }
+.ui-dot.red { background: #ef4444; }
+.ui-dot.yellow { background: #f59e0b; }
+.ui-dot.green { background: #22c55e; }
+.ui-page-title { font-size: 10px; color: var(--muted); margin-left: 6px; font-weight: 600; }
+.ui-body { padding: 14px; }
+.ui-page-name { font-size: 15px; font-weight: 800; color: var(--text); margin-bottom: 10px; }
+
+/* Mock UI elements */
+.mock-input {
+  background: rgba(2,6,23,0.8);
+  border: 1px solid rgba(20,184,166,0.2);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 8px;
+  width: 100%;
+}
+.mock-btn {
+  background: var(--grad);
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  display: inline-block;
+}
+.mock-radio {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+.mock-radio-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--muted);
+}
+.mock-radio-dot { width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--teal); }
+.mock-radio-dot.active { background: var(--teal); }
+.mock-file {
+  border: 1px dashed rgba(20,184,166,0.3);
+  border-radius: 8px;
+  padding: 10px;
+  text-align: center;
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.mock-result {
+  background: rgba(20,184,166,0.06);
+  border: 1px solid rgba(20,184,166,0.15);
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin-bottom: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.mock-name { font-size: 11px; font-weight: 600; color: var(--text); }
+.mock-score { font-size: 11px; font-weight: 800; color: var(--teal); }
+.mock-metric { text-align: center; background: rgba(20,184,166,0.08); border-radius: 8px; padding: 8px; margin-bottom: 6px; }
+.mock-metric-val { font-size: 20px; font-weight: 800; color: var(--teal); }
+.mock-metric-label { font-size: 10px; color: var(--muted); }
+.mock-metrics-row { display: flex; gap: 6px; margin-bottom: 8px; }
+.mock-chart-bar { display: flex; flex-direction: column; gap: 5px; }
+.mock-bar-row { display: flex; align-items: center; gap: 6px; }
+.mock-bar-label { font-size: 9px; color: var(--muted); width: 45px; text-align: right; }
+.mock-bar-track { flex: 1; background: rgba(20,184,166,0.1); border-radius: 4px; height: 10px; }
+.mock-bar-fill { height: 100%; border-radius: 4px; background: var(--grad); }
+
+/* ========== SLIDE 10 – FOLDER STRUCTURE ========== */
+.s10 { background: linear-gradient(135deg, #020617, #0a0617); }
+.folder-tree {
+  background: rgba(2,6,23,0.8);
+  border: 1px solid rgba(20,184,166,0.2);
+  border-radius: 16px;
+  padding: 24px 28px;
+  font-family: 'Fira Code', monospace;
+  font-size: 12px;
+  line-height: 1.8;
+  max-width: 700px;
+  width: 100%;
+}
+.folder-root { color: #fff; font-weight: 700; font-size: 14px; }
+.f-dir { color: #f0abfc; }
+.f-fe { color: var(--teal); }
+.f-be { color: #4ade80; }
+.f-ai { color: #fb923c; }
+.f-db { color: #a855f7; }
+.f-cfg { color: var(--muted); }
+.f-comment { color: #475569; font-size: 11px; }
+.legend {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 16px;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+/* ========== SLIDE 11 – RESULTS ========== */
+.s11 { background: var(--navy); }
+.results-table {
+  width: 100%;
+  max-width: 800px;
+  border-collapse: separate;
+  border-spacing: 0 8px;
+  margin-bottom: 16px;
+}
+.results-table thead th {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--teal);
+  padding: 8px 16px;
+  text-align: left;
+}
+.results-table tbody tr {
+  background: rgba(15,23,42,0.7);
+  border: 1px solid rgba(20,184,166,0.12);
+  border-radius: 10px;
+  transition: all 0.3s;
+}
+.results-table tbody tr:hover { background: rgba(20,184,166,0.08); }
+.results-table tbody td {
+  padding: 12px 16px;
+  font-size: 13px;
+  color: var(--text);
+}
+.results-table tbody td:first-child { border-radius: 10px 0 0 10px; font-weight: 600; }
+.results-table tbody td:last-child { border-radius: 0 10px 10px 0; }
+.score-bar-wrap { display: flex; align-items: center; gap: 10px; }
+.score-bar-bg { flex: 1; background: rgba(20,184,166,0.1); border-radius: 4px; height: 8px; }
+.score-bar-fill { height: 100%; border-radius: 4px; background: var(--grad); }
+.score-val { font-weight: 800; color: var(--teal); font-size: 13px; min-width: 48px; }
+.rank-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  font-size: 12px; font-weight: 800;
+}
+.rank-1 { background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; }
+.rank-2 { background: linear-gradient(135deg, #94a3b8, #64748b); color: #fff; }
+.rank-3 { background: linear-gradient(135deg, #fb923c, #ea580c); color: #fff; }
+.rank-rest { background: rgba(20,184,166,0.15); color: var(--teal); }
+.perf-stats {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.perf-stat {
+  background: rgba(20,184,166,0.07);
+  border: 1px solid rgba(20,184,166,0.2);
+  border-radius: 12px;
+  padding: 12px 20px;
+  text-align: center;
+  min-width: 140px;
+}
+.perf-val { font-size: 24px; font-weight: 800; color: var(--teal); }
+.perf-label { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+/* ========== SLIDE 12 – USE CASES ========== */
+.s12 { background: linear-gradient(135deg, #020617, #071a14); }
+.use-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  width: 100%;
+  max-width: 900px;
+}
+.use-card {
+  background: rgba(15,23,42,0.7);
+  border: 1px solid rgba(20,184,166,0.15);
+  border-radius: 16px;
+  padding: 22px 18px;
+  text-align: center;
+  transition: all 0.3s;
+}
+.use-card:hover { transform: translateY(-4px); border-color: var(--teal); box-shadow: 0 10px 30px rgba(20,184,166,0.15); }
+.use-icon { font-size: 36px; margin-bottom: 10px; }
+.use-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+.use-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+/* ========== SLIDE 13 – ADV/LIM/FUTURE ========== */
+.s13 { background: var(--navy); }
+.alf-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  width: 100%;
+  max-width: 960px;
+}
+.alf-col { border-radius: 16px; padding: 20px 18px; border: 1px solid; }
+.alf-adv { border-color: rgba(34,197,94,0.25); background: rgba(34,197,94,0.05); }
+.alf-lim { border-color: rgba(251,146,60,0.25); background: rgba(251,146,60,0.05); }
+.alf-fut { border-color: rgba(14,165,233,0.25); background: rgba(14,165,233,0.05); }
+.alf-title { font-size: 13px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 14px; }
+.alf-adv .alf-title { color: #22c55e; }
+.alf-lim .alf-title { color: #fb923c; }
+.alf-fut .alf-title { color: var(--cyan); }
+.alf-item {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  margin-bottom: 10px;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+.alf-bullet { flex-shrink: 0; margin-top: 1px; font-size: 14px; }
+
+/* ========== SLIDE 14 – CONCLUSION ========== */
+.s14 { background: var(--navy); }
+.s14-bg {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% 50%, rgba(20,184,166,0.1) 0%, transparent 70%);
+}
+.concl-points {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 680px;
+  width: 100%;
+  margin-bottom: 20px;
+}
+.concl-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(15,23,42,0.6);
+  border: 1px solid rgba(20,184,166,0.15);
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 14px;
+  color: var(--text);
+  font-weight: 500;
+}
+.concl-check { color: var(--teal); font-size: 18px; }
+.stack-badges {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 8px;
+}
+.stack-badge {
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  border: 1px solid;
+}
+.sb-teal { border-color: var(--teal); color: var(--teal); background: rgba(20,184,166,0.08); }
+.sb-cyan { border-color: var(--cyan); color: var(--cyan); background: rgba(14,165,233,0.08); }
+.sb-purple { border-color: #a855f7; color: #a855f7; background: rgba(168,85,247,0.08); }
+.sb-orange { border-color: #fb923c; color: #fb923c; background: rgba(251,146,60,0.08); }
+.sb-green { border-color: #22c55e; color: #22c55e; background: rgba(34,197,94,0.08); }
+.thankyou {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(28px, 4vw, 52px);
+  font-weight: 800;
+  background: var(--grad);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-top: 16px;
+}
+
+/* Slide header shared */
+.slide-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+.slide-number {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--teal);
+  margin-bottom: 6px;
+  opacity: 0.7;
+}
+.slide-main-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(22px, 3.5vw, 42px);
+  font-weight: 800;
+  line-height: 1.1;
+}
+.slide-subtitle {
+  font-size: 14px;
+  color: var(--muted);
+  margin-top: 6px;
+}
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="slide-deck">
+
+<!-- ===== SLIDE 1: HERO ===== -->
+<div class="slide s1 active">
+  <div class="s1-bg"></div>
+  <div class="s1-grid"></div>
+  <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:20px;width:100%">
+    <div class="animate-in" style="opacity:0">
+      <div class="brain-icon">🧠</div>
+    </div>
+    <div class="animate-in" style="opacity:0">
+      <h1 class="hero-title">TalentSync</h1>
+      <h2 style="font-family:'Space Grotesk',sans-serif;font-size:clamp(16px,2.5vw,28px);font-weight:500;color:var(--muted);text-align:center;margin-top:6px">AI-Powered Resume Matching System</h2>
+    </div>
+    <p class="hero-sub animate-in" style="opacity:0">Automating recruiter workflows with semantic embeddings, vector search, and cross-encoder reranking — replacing manual resume screening with intelligent AI matching.</p>
+    <div class="hero-badges animate-in" style="opacity:0">
+      <span class="badge">🔍 Semantic Search</span>
+      <span class="badge">📊 Vector Embeddings</span>
+      <span class="badge cyan">⚡ FastAPI Backend</span>
+      <span class="badge cyan">🗄️ MongoDB Atlas</span>
+      <span class="badge">🎯 CrossEncoder Reranking</span>
+    </div>
+    <div class="floating-cards animate-in" style="opacity:0">
+      <div class="mini-card">
+        <div class="mc-name">👤 Harsh Sharma</div>
+        <div>Python · FastAPI · AWS</div>
+        <div class="mc-score">Match: 91.2%</div>
+      </div>
+      <div class="mini-card">
+        <div class="mc-name">👤 Priya Mehta</div>
+        <div>MongoDB · React · Node</div>
+        <div class="mc-score">Match: 84.7%</div>
+      </div>
+      <div class="mini-card">
+        <div class="mc-name">👤 Rahul Dev</div>
+        <div>ML · TensorFlow · Python</div>
+        <div class="mc-score">Match: 78.3%</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SLIDE 2: PROBLEM ===== -->
+<div class="slide s2">
+  <div style="width:100%;max-width:960px">
+    <div class="slide-header animate-in" style="opacity:0">
+      <div class="slide-number">02 — Problem Statement</div>
+      <h2 class="slide-main-title" style="color:#f87171">Why Manual Screening <span class="grad-text">Fails</span></h2>
+      <p class="slide-subtitle">The real cost of traditional resume filtering in modern recruitment</p>
+    </div>
+    <div class="problem-grid animate-in" style="opacity:0">
+      <div class="problem-card">
+        <div class="prob-icon">⏱️</div>
+        <div>
+          <div class="prob-title">Painfully Slow Process</div>
+          <div class="prob-desc">Recruiters spend 6–8 seconds per resume. For 500 applications, that's hours of repetitive work with high cognitive load.</div>
+        </div>
+      </div>
+      <div class="problem-card">
+        <div class="prob-icon">🔤</div>
+        <div>
+          <div class="prob-title">Keyword Matching is Broken</div>
+          <div class="prob-desc">Searching "Java" misses "Spring Boot" experts. Semantic meaning is completely lost in traditional ATS systems.</div>
+        </div>
+      </div>
+      <div class="problem-card">
+        <div class="prob-icon">🎯</div>
+        <div>
+          <div class="prob-title">Missing Great Candidates</div>
+          <div class="prob-desc">Qualified candidates get filtered out due to phrasing differences — not skill gaps. A huge loss for both sides.</div>
+        </div>
+      </div>
+      <div class="problem-card">
+        <div class="prob-icon">📚</div>
+        <div>
+          <div class="prob-title">Volume Overload</div>
+          <div class="prob-desc">High-volume roles receive 200–1000+ applications. No human can fairly evaluate every resume without bias or fatigue.</div>
+        </div>
+      </div>
+      <div class="problem-card">
+        <div class="prob-icon">🔒</div>
+        <div>
+          <div class="prob-title">No Visibility Control</div>
+          <div class="prob-desc">No system to separate public talent pools from private company-specific resume databases with proper access control.</div>
+        </div>
+      </div>
+      <div class="problem-card">
+        <div class="prob-icon">📉</div>
+        <div>
+          <div class="prob-title">Poor Ranking Logic</div>
+          <div class="prob-desc">Traditional ATS ranks by keyword count, not actual relevance. Best candidates are often buried on page 3.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SLIDE 3: OBJECTIVES ===== -->
+<div class="slide s3">
+  <div style="width:100%;max-width:860px">
+    <div class="slide-header animate-in" style="opacity:0">
+      <div class="slide-number">03 — Objectives</div>
+      <h2 class="slide-main-title"><span class="grad-text">What TalentSync</span> Sets Out to Achieve</h2>
+    </div>
+    <div class="obj-list animate-in" style="opacity:0">
+      <div class="obj-item">
+        <div class="obj-num">1</div>
+        <div class="obj-text">🤖 <strong>Automate resume screening</strong> — eliminate manual review of every individual resume using AI-driven analysis</div>
+      </div>
+      <div class="obj-item">
+        <div class="obj-num">2</div>
+        <div class="obj-text">🎯 <strong>Semantic matching accuracy</strong> — understand meaning, not just keywords, using vector embeddings and cosine similarity</div>
+      </div>
+      <div class="obj-item">
+        <div class="obj-num">3</div>
+        <div class="obj-text">⚡ <strong>Reduce recruiter workload</strong> — from hours of screening to seconds of AI-ranked results</div>
+      </div>
+      <div class="obj-item">
+        <div class="obj-num">4</div>
+        <div class="obj-text">🏆 <strong>Ranked candidate recommendations</strong> — deliver Top-10 best matches with precise match scores via CrossEncoder reranking</div>
+      </div>
+      <div class="obj-item">
+        <div class="obj-num">5</div>
+        <div class="obj-text">🔐 <strong>Public/Private visibility control</strong> — company-specific private resume pools with JWT-secured multi-recruiter authentication</div>
+      </div>
+      <div class="obj-item">
+        <div class="obj-num">6</div>
+        <div class="obj-text">📊 <strong>Real-time analytics dashboard</strong> — live charts showing resume distribution, top skills, and database stats</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SLIDE 4: SOLUTION ===== -->
+<div class="slide s4">
+  <div style="width:100%;max-width:960px">
+    <div class="slide-header animate-in" style="opacity:0">
+      <div class="slide-number">04 — Proposed Solution</div>
+      <h2 class="slide-main-title">The <span class="grad-text">TalentSync</span> Pipeline</h2>
+      <p class="slide-subtitle">End-to-end AI pipeline from raw resume to ranked candidate</p>
+    </div>
+    <div class="flow-row animate-in" style="opacity:0">
+      <div class="flow-step">
+        <div class="flow-box">
+          <div class="flow-icon">📄</div>
+          <div class="flow-name">Upload</div>
+          <div class="flow-desc">PDF / DOCX<br>batch upload</div>
+        </div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-box">
+          <div class="flow-icon">🔍</div>
+          <div class="flow-name">Extract</div>
+          <div class="flow-desc">pdfplumber<br>python-docx</div>
+        </div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-box">
+          <div class="flow-icon">🧩</div>
+          <div class="flow-name">Parse</div>
+          <div class="flow-desc">Name, Skills<br>Experience</div>
+        </div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-box">
+          <div class="flow-icon">🔢</div>
+          <div class="flow-name">Embed</div>
+          <div class="flow-desc">384-dim<br>vector</div>
+        </div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-box">
+          <div class="flow-icon">🗄️</div>
+          <div class="flow-name">Store</div>
+          <div class="flow-desc">MongoDB +<br>ChromaDB</div>
+        </div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-box">
+          <div class="flow-icon">📝</div>
+          <div class="flow-name">JD Input</div>
+          <div class="flow-desc">Paste job<br>description</div>
+        </div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-box">
+          <div class="flow-icon">🎯</div>
+          <div class="flow-name">Match</div>
+          <div class="flow-desc">Cosine<br>similarity</div>
+        </div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-box" style="border-color:rgba(20,184,166,0.6);box-shadow:0 0 20px rgba(20,184,166,0.2)">
+          <div class="flow-icon">🏆</div>
+          <div class="flow-name">Ranked</div>
+          <div class="flow-desc">CrossEncoder<br>reranking</div>
+        </div>
+      </div>
+    </div>
+    <div class="flow-badges animate-in" style="opacity:0;margin-top:20px">
+      <span class="badge">🧠 Sentence Transformers (all-MiniLM-L6-v2)</span>
+      <span class="badge cyan">⚡ ChromaDB Vector Search</span>
+      <span class="badge">🎯 ms-marco CrossEncoder Reranking</span>
+      <span class="badge cyan">🔐 Public / Private Visibility</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SLIDE 5: ARCHITECTURE ===== -->
+<div class="slide s5">
+  <div style="width:100%;max-width:960px">
+    <div class="slide-header animate-in" style="opacity:0">
+      <div class="slide-number">05 — System Architecture</div>
+      <h2 class="slide-main-title">Full-Stack <span class="grad-text">4-Layer Architecture</span></h2>
+    </div>
+    <div class="arch-grid animate-in" style="opacity:0">
+      <div class="arch-layer layer-fe">
+        <div class="arch-layer-title">🖥️ Frontend Layer — Streamlit :8501</div>
+        <div class="arch-items">
+          <span class="arch-item">🔐 Auth Page</span>
+          <span class="arch-item">📊 Dashboard</span>
+          <span class="arch-item">📤 Upload Resumes</span>
+          <span class="arch-item">📌 JD Matching</span>
+          <span class="arch-item">📈 Analytics</span>
+          <span class="arch-item">🎨 Dark Theme UI</span>
+        </div>
+        <div class="arch-port">Python · Streamlit · Plotly · Requests</div>
+      </div>
+      <div class="arch-layer layer-be">
+        <div class="arch-layer-title">⚙️ Backend Layer — FastAPI :8000</div>
+        <div class="arch-items">
+          <span class="arch-item">POST /auth/signup</span>
+          <span class="arch-item">POST /auth/login</span>
+          <span class="arch-item">POST /resumes/upload</span>
+          <span class="arch-item">GET /resumes/list</span>
+          <span class="arch-item">GET /resumes/stats</span>
+          <span class="arch-item">POST /jd/match</span>
+        </div>
+        <div class="arch-port">FastAPI · Uvicorn · Pydantic · JWT · bcrypt</div>
+      </div>
+      <div class="arch-layer layer-db">
+        <div class="arch-layer-title">🗄️ Database Layer</div>
+        <div class="arch-items">
+          <span class="arch-item">MongoDB Atlas</span>
+          <span class="arch-item">raw_resumes</span>
+          <span class="arch-item">processed_resumes</span>
+          <span class="arch-item">recruiters</span>
+          <span class="arch-item">ChromaDB</span>
+          <span class="arch-item">Persistent Vectors</span>
+        </div>
+        <div class="arch-port">PyMongo · chromadb PersistentClient · data/chromadb/</div>
+      </div>
+      <div class="arch-layer layer-ai">
+        <div class="arch-layer-title">🤖 AI / ML Layer</div>
+        <div class="arch-items">
+          <span class="arch-item">Sentence Transformers</span>
+          <span class="arch-item">all-MiniLM-L6-v2</span>
+          <span class="arch-item">384-dim Embeddings</span>
+          <span class="arch-item">CrossEncoder</span>
+          <span class="arch-item">ms-marco-MiniLM</span>
+          <span class="arch-item">Cosine Similarity</span>
+        </div>
+        <div class="arch-port">sentence-transformers · pdfplumber · python-docx</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SLIDE 6: TECH STACK ===== -->
+<div class="slide s6">
+  <div style="width:100%;max-width:960px">
+    <div class="slide-header animate-in" style="opacity:0">
+      <div class="slide-number">06 — Technology Stack</div>
+      <h2 class="slide-main-title">Tools & <span class="grad-text">Technologies Used</span></h2>
+    </div>
+    <div class="tech-grid animate-in" style="opacity:0">
+      <div class="tech-card">
+        <div class="tech-icon">🐍</div>
+        <div class="tech-name">Python 3.14</div>
+        <div class="tech-desc">Primary language for both frontend and backend</div>
+        <div class="tech-tag">core language</div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-icon">⚡</div>
+        <div class="tech-name">FastAPI</div>
+        <div class="tech-desc">Async REST API framework with auto Swagger docs</div>
+        <div class="tech-tag">backend</div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-icon">🎈</div>
+        <div class="tech-name">Streamlit</div>
+        <div class="tech-desc">Python-native web UI framework — no HTML/JS needed</div>
+        <div class="tech-tag">frontend</div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-icon">🍃</div>
+        <div class="tech-name">MongoDB Atlas</div>
+        <div class="tech-desc">Cloud NoSQL database — stores structured resume data</div>
+        <div class="tech-tag">document db</div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-icon">🔮</div>
+        <div class="tech-name">ChromaDB</div>
+        <div class="tech-desc">Persistent local vector database for embeddings</div>
+        <div class="tech-tag">vector db</div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-icon">🧠</div>
+        <div class="tech-name">Sentence Transformers</div>
+        <div class="tech-desc">all-MiniLM-L6-v2 generates 384-dim text vectors</div>
+        <div class="tech-tag">embeddings</div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-icon">🎯</div>
+        <div class="tech-name">CrossEncoder</div>
+        <div class="tech-desc">ms-marco model for precise JD–resume reranking</div>
+        <div class="tech-tag">reranking</div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-icon">🔐</div>
+        <div class="tech-name">JWT + bcrypt</div>
+        <div class="tech-desc">Stateless auth tokens + secure password hashing</div>
+        <div class="tech-tag">authentication</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SLIDE 7: METHODOLOGY ===== -->
+<div class="slide s7">
+  <div style="width:100%;max-width:940px">
+    <div class="slide-header animate-in" style="opacity:0">
+      <div class="slide-number">07 — Working Methodology</div>
+      <h2 class="slide-main-title">Step-by-Step <span class="grad-text">System Flow</span></h2>
+    </div>
+    <div class="method-grid animate-in" style="opacity:0">
+      <div class="method-step">
+        <div class="step-num">1</div>
+        <div>
+          <div class="step-title">Recruiter Authentication</div>
+          <div class="step-desc">Signup/Login via <span style="color:var(--teal)">bcrypt</span>-hashed passwords. Server issues JWT access + refresh tokens stored in Streamlit session state.</div>
+          <span class="code-pill">auth_routes.py</span>
+        </div>
+      </div>
+      <div class="method-step">
+        <div class="step-num">2</div>
+        <div>
+          <div class="step-title">Resume Upload (PDF/DOCX)</div>
+          <div class="step-desc">Multiple files uploaded via multipart form to <span style="color:var(--teal)">POST /resumes/upload</span>. Saved to <span style="color:var(--teal)">data/raw_resumes/</span> folder.</div>
+          <span class="code-pill">resume_routes.py</span>
+        </div>
+      </div>
+      <div class="method-step">
+        <div class="step-num">3</div>
+        <div>
+          <div class="step-title">Text Extraction</div>
+          <div class="step-desc"><span style="color:var(--teal)">pdfplumber</span> for PDFs, <span style="color:var(--teal)">python-docx</span> for DOCX. Raw text cleaned with regex to remove extra whitespace.</div>
+          <span class="code-pill">utils.py → extract_text()</span>
+        </div>
+      </div>
+      <div class="method-step">
+        <div class="step-num">4</div>
+        <div>
+          <div class="step-title">Resume Parsing</div>
+          <div class="step-desc">Regex-based parser extracts <strong>name</strong> (first proper-name line), <strong>skills</strong> (keyword list of 50+ tech terms), <strong>experience</strong> (job title + year patterns).</div>
+          <span class="code-pill">llm_parser.py → parse_resume()</span>
+        </div>
+      </div>
+      <div class="method-step">
+        <div class="step-num">5</div>
+        <div>
+          <div class="step-title">Embedding Generation</div>
+          <div class="step-desc">Resume text converted to a <span style="color:var(--teal)">384-dimensional vector</span> using <strong>all-MiniLM-L6-v2</strong>. Normalized for cosine similarity. Runs 100% locally.</div>
+          <span class="code-pill">embedding.py → generate_embedding()</span>
+        </div>
+      </div>
+      <div class="method-step">
+        <div class="step-num">6</div>
+        <div>
+          <div class="step-title">Dual Storage</div>
+          <div class="step-desc">Embedding stored in <span style="color:var(--teal)">ChromaDB</span> (persistent on disk). Structured data (name, skills, experience) stored in <span style="color:var(--teal)">MongoDB Atlas</span>.</div>
+          <span class="code-pill">chroma_client.py + database.py</span>
+        </div>
+      </div>
+      <div class="method-step">
+        <div class="step-num">7</div>
+        <div>
+          <div class="step-title">JD Vector Search</div>
+          <div class="step-desc">JD text embedded → queried against ChromaDB using <span style="color:var(--teal)">cosine similarity</span>. Returns top 10 most similar resume IDs instantly.</div>
+          <span class="code-pill">jd_matcher.py → match_jd()</span>
+        </div>
+      </div>
+      <div class="method-step">
+        <div class="step-num">8</div>
+        <div>
+          <div class="step-title">CrossEncoder Reranking</div>
+          <div class="step-desc">Each (JD, resume) pair scored by <span style="color:var(--teal)">ms-marco-MiniLM-L-6-v2</span>. Final results sorted by rerank score and returned with % match.</div>
+          <span class="code-pill">reranker.py → rerank()</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SLIDE 8: FEATURES ===== -->
+<div class="slide s8">
+  <div style="width:100%;max-width:960px">
+    <div class="slide-header animate-in" style="opacity:0">
+      <div class="slide-number">08 — Key Features</div>
+      <h2 class="slide-main-title">What Makes <span class="grad-text">TalentSync</span> Powerful</h2>
+    </div>
+    <div class="feat-grid animate-in" style="opacity:0">
+      <div class="feat-card">
+        <div class="feat-icon">🔐</div>
+        <div class="feat-title">JWT Authentication</div>
+        <div class="feat-desc">Access + refresh tokens. Stateless, secure, industry-standard auth system.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🌐</div>
+        <div class="feat-title">Public / Private Pools</div>
+        <div class="feat-desc">Resumes tagged as public or company-private with metadata filtering in ChromaDB.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🧠</div>
+        <div class="feat-title">Two-Stage AI Matching</div>
+        <div class="feat-desc">Fast vector retrieval (ChromaDB) → precise CrossEncoder reranking for best results.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">💾</div>
+        <div class="feat-title">Persistent ChromaDB</div>
+        <div class="feat-desc">Embeddings stored on disk. Survive server restarts. No re-upload needed.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">📊</div>
+        <div class="feat-title">Live Analytics</div>
+        <div class="feat-desc">Real-time Plotly charts — resume visibility pie chart + top skills bar chart from actual DB data.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">📤</div>
+        <div class="feat-title">Batch Upload</div>
+        <div class="feat-desc">Upload multiple PDF/DOCX files at once. Each processed independently in sequence.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🗺️</div>
+        <div class="feat-title">Multi-Page Navigation</div>
+        <div class="feat-desc">5-page Streamlit app with sidebar navigation and persistent session state.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🔌</div>
+        <div class="feat-title">9 REST API Endpoints</div>
+        <div class="feat-desc">Full CRUD for resumes, auth routes, stats, and JD matching. Auto Swagger docs at /docs.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SLIDE 9: DEMO ===== -->
+<div class="slide s9">
+  <div style="width:100%;max-width:960px">
+    <div class="slide-header animate-in" style="opacity:0">
+      <div class="slide-number">09 — Project Demo</div>
+      <h2 class="slide-main-title">UI Screens & <span class="grad-text">User Journey</span></h2>
+    </div>
+    <div class="ui-grid animate-in" style="opacity:0">
+      <!-- Login -->
+      <div class="ui-mockup">
+        <div class="ui-titlebar">
+          <div class="ui-dot red"></div><div class="ui-dot yellow"></div><div class="ui-dot green"></div>
+          <div class="ui-page-title">localhost:8501 — Auth</div>
+        </div>
+        <div class="ui-body">
+          <div class="ui-page-name">🔐 TalentSync – Recruiter Access</div>
+          <div style="display:flex;gap:8px;margin-bottom:10px">
+            <div style="flex:1;background:var(--grad);border-radius:8px;padding:6px;text-align:center;font-size:11px;font-weight:700;color:#fff">Login</div>
+            <div style="flex:1;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:6px;text-align:center;font-size:11px;color:var(--muted)">Signup</div>
+          </div>
+          <div class="mock-input">✉️ email@company.com</div>
+          <div class="mock-input">🔒 ••••••••</div>
+          <div class="mock-btn">Login Now →</div>
+        </div>
+      </div>
+      <!-- Upload -->
+      <div class="ui-mockup">
+        <div class="ui-titlebar">
+          <div class="ui-dot red"></div><div class="ui-dot yellow"></div><div class="ui-dot green"></div>
+          <div class="ui-page-title">localhost:8501 — Upload Resumes</div>
+        </div>
+        <div class="ui-body">
+          <div class="ui-page-name">📤 Upload Resumes</div>
+          <div class="mock-radio">
+            <div class="mock-radio-item"><div class="mock-radio-dot active"></div> Public</div>
+            <div class="mock-radio-item"><div class="mock-radio-dot"></div> Private</div>
+          </div>
+          <div class="mock-file">📄 harsh_resume.pdf · 111.8KB<br><span style="font-size:10px;color:var(--teal)">+ Drop files here</span></div>
+          <div class="mock-btn">Upload</div>
+          <div style="margin-top:8px;padding:6px 10px;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.2);border-radius:6px;font-size:10px;color:#22c55e">✅ Resumes uploaded successfully</div>
+        </div>
+      </div>
+      <!-- JD Match -->
+      <div class="ui-mockup">
+        <div class="ui-titlebar">
+          <div class="ui-dot red"></div><div class="ui-dot yellow"></div><div class="ui-dot green"></div>
+          <div class="ui-page-title">localhost:8501 — JD Matching</div>
+        </div>
+        <div class="ui-body">
+          <div class="ui-page-name">📌 Job Description Matching</div>
+          <div style="background:rgba(2,6,23,0.8);border:1px solid rgba(20,184,166,0.2);border-radius:8px;padding:8px;font-size:10px;color:var(--muted);margin-bottom:8px;line-height:1.5">Looking for Python developer with FastAPI, MongoDB...</div>
+          <div class="mock-btn" style="margin-bottom:8px">Match</div>
+          <div class="mock-result"><span class="mock-name">👤 Harsh Sharma</span><span class="mock-score">91.2%</span></div>
+          <div class="mock-result"><span class="mock-name">👤 Priya Mehta</span><span class="mock-score">84.7%</span></div>
+          <div class="mock-result"><span class="mock-name">👤 Rahul Dev</span><span class="mock-score">78.3%</span></div>
+        </div>
+      </div>
+      <!-- Analytics -->
+      <div class="ui-mockup">
+        <div class="ui-titlebar">
+          <div class="ui-dot red"></div><div class="ui-dot yellow"></div><div class="ui-dot green"></div>
+          <div class="ui-page-title">localhost:8501 — Analytics</div>
+        </div>
+        <div class="ui-body">
+          <div class="ui-page-name">📊 Resume Analytics</div>
+          <div class="mock-metrics-row">
+            <div class="mock-metric" style="flex:1"><div class="mock-metric-val">12</div><div class="mock-metric-label">Total</div></div>
+            <div class="mock-metric" style="flex:1"><div class="mock-metric-val" style="color:var(--cyan)">8</div><div class="mock-metric-label">Public</div></div>
+            <div class="mock-metric" style="flex:1"><div class="mock-metric-val" style="color:#a855f7">4</div><div class="mock-metric-label">Private</div></div>
+          </div>
+          <div class="mock-chart-bar">
+            <div class="mock-bar-row"><div class="mock-bar-label">Python</div><div class="mock-bar-track"><div class="mock-bar-fill" style="width:90%"></div></div></div>
+            <div class="mock-bar-row"><div class="mock-bar-label">FastAPI</div><div class="mock-bar-track"><div class="mock-bar-fill" style="width:70%"></div></div></div>
+            <div class="mock-bar-row"><div class="mock-bar-label">MongoDB</div><div class="mock-bar-track"><div class="mock-bar-fill" style="width:60%"></div></div></div>
+            <div class="mock-bar-row"><div class="mock-bar-label">AWS</div><div class="mock-bar-track"><div class="mock-bar-fill" style="width:45%"></div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SLIDE 10: FOLDER STRUCTURE ===== -->
+<div class="slide s10">
+  <div style="width:100%;max-width:960px;display:flex;gap:32px;align-items:flex-start">
+    <div style="flex:1;min-width:0">
+      <div class="slide-header animate-in" style="opacity:0;text-align:left">
+        <div class="slide-number">10 — Code Architecture</div>
+        <h2 class="slide-main-title" style="text-align:left">Folder <span class="grad-text">Structure</span></h2>
+      </div>
+      <div class="folder-tree animate-in" style="opacity:0">
+<span class="folder-root">📁 resume-jd1/</span>
+├── <span class="f-fe">app.py</span>               <span class="f-comment"># Streamlit entry point</span>
+│
+├── <span class="f-dir">📁 frontend/</span>
+│   ├── <span class="f-fe">api.py</span>           <span class="f-comment"># HTTP → backend</span>
+│   ├── <span class="f-fe">auth.py</span>          <span class="f-comment"># Login/Signup UI</span>
+│   ├── <span class="f-fe">dashboard.py</span>     <span class="f-comment"># Real resume cards</span>
+│   ├── <span class="f-fe">upload.py</span>        <span class="f-comment"># File uploader</span>
+│   ├── <span class="f-fe">jd_match.py</span>      <span class="f-comment"># JD match UI</span>
+│   ├── <span class="f-fe">analytics.py</span>     <span class="f-comment"># Plotly charts</span>
+│   └── <span class="f-fe">styles.py</span>        <span class="f-comment"># Dark CSS theme</span>
+│
+├── <span class="f-be">main.py</span>              <span class="f-comment"># FastAPI app</span>
+├── <span class="f-be">auth_routes.py</span>       <span class="f-comment"># /auth endpoints</span>
+├── <span class="f-be">resume_routes.py</span>     <span class="f-comment"># /resumes endpoints</span>
+├── <span class="f-be">jd_routes.py</span>         <span class="f-comment"># /jd/match</span>
+├── <span class="f-be">auth_service.py</span>      <span class="f-comment"># Signup/login logic</span>
+├── <span class="f-be">dependencies.py</span>      <span class="f-comment"># JWT middleware</span>
+│
+├── <span class="f-ai">llm_parser.py</span>        <span class="f-comment"># Resume parser</span>
+├── <span class="f-ai">embedding.py</span>         <span class="f-comment"># Sentence Transformers</span>
+├── <span class="f-ai">reranker.py</span>          <span class="f-comment"># CrossEncoder</span>
+│
+├── <span class="f-db">database.py</span>          <span class="f-comment"># MongoDB client</span>
+├── <span class="f-db">chroma_client.py</span>     <span class="f-comment"># ChromaDB client</span>
+├── <span class="f-db">models.py</span>            <span class="f-comment"># Pydantic schemas</span>
+│
+├── <span class="f-cfg">config.py</span>            <span class="f-comment"># Env vars</span>
+├── <span class="f-cfg">utils.py</span>             <span class="f-comment"># PDF/DOCX extract</span>
+└── <span class="f-cfg">.env</span>                 <span class="f-comment"># Secrets (git-ignored)</span>
+      </div>
+    </div>
+    <div style="flex:0 0 260px;display:flex;flex-direction:column;gap:12px" class="animate-in" style="opacity:0">
+      <h3 style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px">Separation of Concerns</h3>
+      <div style="background:rgba(20,184,166,0.08);border:1px solid rgba(20,184,166,0.2);border-radius:10px;padding:14px">
+        <div style="font-size:11px;font-weight:700;color:var(--teal);margin-bottom:6px">🖥️ Frontend (Streamlit)</div>
+        <div style="font-size:11px;color:var(--muted)">Pure UI — makes HTTP requests, displays data. Zero business logic.</div>
+      </div>
+      <div style="background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.2);border-radius:10px;padding:14px">
+        <div style="font-size:11px;font-weight:700;color:#4ade80;margin-bottom:6px">⚙️ Backend (FastAPI)</div>
+        <div style="font-size:11px;color:var(--muted)">All business logic, auth, file processing, routing. Decoupled from UI.</div>
+      </div>
+      <div style="background:rgba(251,146,60,0.08);border:1px solid rgba(251,146,60,0.2);border-radius:10px;padding:14px">
+        <div style="font-size:11px;font-weight:700;color:#fb923c;margin-bottom:6px">🤖 AI Layer</div>
+        <div style="font-size:11px;color:var(--muted)">Embedding, parsing, reranking — fully modular, swappable models.</div>
+      </div>
+      <div style="background:rgba(168,85,247,0.08);border:1px solid rgba(168,85,247,0.2);border-radius:10px;padding:14px">
+        <div style="font-size:11px;font-weight:700;color:#a855f7;margin-bottom:6px">🗄️ Data Layer</div>
+        <div style="font-size:11px;color:var(--muted)">MongoDB (structured) + ChromaDB (vectors). Each has a single-purpose client module.</div>
+      </div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:var(--teal)"></div><span style="font-size:11px;color:var(--muted)">Frontend</span></div>
+        <div class="legend-item"><div class="legend-dot" style="background:#4ade80"></div><span style="font-size:11px;color:var(--muted)">Backend</span></div>
+        <div class="legend-item"><div class="legend-dot" style="background:#fb923c"></div><span style="font-size:11px;color:var(--muted)">AI/ML</span></div>
+        <div class="legend-item"><div class="legend-dot" style="background:#a855f7"></div><span style="font-size:11px;color:var(--muted)">Database</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SLIDE 11: RESULTS ===== -->
+<div class="slide s11">
+  <div style="width:100%;max-width:900px">
+    <div class="slide-header animate-in" style="opacity:0">
+      <div class="slide-number">11 — Results & Performance</div>
+      <h2 class="slide-main-title">Real <span class="grad-text">Matching Results</span></h2>
+    </div>
+    <table class="results-table animate-in" style="opacity:0">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Candidate</th>
+          <th>Top Skills</th>
+          <th>Match Score</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="rank-badge rank-1">🥇</span></td>
+          <td>Harsh Sharma</td>
+          <td><span style="color:var(--teal);font-size:12px">Python · FastAPI · MongoDB · AWS</span></td>
+          <td><div class="score-bar-wrap"><div class="score-bar-bg"><div class="score-bar-fill" style="width:91%"></div></div><span class="score-val">91.2%</span></div></td>
+        </tr>
+        <tr>
+          <td><span class="rank-badge rank-2">🥈</span></td>
+          <td>Priya Mehta</td>
+          <td><span style="color:var(--teal);font-size:12px">Python · React · MongoDB · Docker</span></td>
+          <td><div class="score-bar-wrap"><div class="score-bar-bg"><div class="score-bar-fill" style="width:85%"></div></div><span class="score-val">84.7%</span></div></td>
+        </tr>
+        <tr>
+          <td><span class="rank-badge rank-3">🥉</span></td>
+          <td>Rahul Dev</td>
+          <td><span style="color:var(--teal);font-size:12px">Python · ML · TensorFlow · AWS</span></td>
+          <td><div class="score-bar-wrap"><div class="score-bar-bg"><div class="score-bar-fill" style="width:78%"></div></div><span class="score-val">78.3%</span></div></td>
+        </tr>
+        <tr>
+          <td><span class="rank-badge rank-rest">4</span></td>
+          <td>Ananya Singh</td>
+          <td><span style="color:var(--teal);font-size:12px">Node · Express · MongoDB · REST</span></td>
+          <td><div class="score-bar-wrap"><div class="score-bar-bg"><div class="score-bar-fill" style="width:71%"></div></div><span class="score-val">71.5%</span></div></td>
+        </tr>
+        <tr>
+          <td><span class="rank-badge rank-rest">5</span></td>
+          <td>Vikas Nair</td>
+          <td><span style="color:var(--teal);font-size:12px">Go · PostgreSQL · Kubernetes</span></td>
+          <td><div class="score-bar-wrap"><div class="score-bar-bg"><div class="score-bar-fill" style="width:63%"></div></div><span class="score-val">62.8%</span></div></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="perf-stats animate-in" style="opacity:0">
+      <div class="perf-stat"><div class="perf-val">384</div><div class="perf-label">Embedding Dimensions</div></div>
+      <div class="perf-stat"><div class="perf-val">Top 10</div><div class="perf-label">Vector Search Results</div></div>
+      <div class="perf-stat"><div class="perf-val">2-Stage</div><div class="perf-label">AI Pipeline</div></div>
+      <div class="perf-stat"><div class="perf-val">100%</div><div class="perf-label">Local (No API Cost)</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SLIDE 12: USE CASES ===== -->
+<div class="slide s12">
+  <div style="width:100%;max-width:900px">
+    <div class="slide-header animate-in" style="opacity:0">
+      <div class="slide-number">12 — Use Cases</div>
+      <h2 class="slide-main-title">Real-World <span class="grad-text">HR Industry</span> Applications</h2>
+    </div>
+    <div class="use-grid animate-in" style="opacity:0">
+      <div class="use-card">
+        <div class="use-icon">🏢</div>
+        <div class="use-title">Recruitment Agencies</div>
+        <div class="use-desc">Screen hundreds of resumes for multiple clients simultaneously with ranked shortlists</div>
+      </div>
+      <div class="use-card">
+        <div class="use-icon">🏭</div>
+        <div class="use-title">Corporate HR</div>
+        <div class="use-desc">Internal hiring with private company resume pools — keep candidate data confidential</div>
+      </div>
+      <div class="use-card">
+        <div class="use-icon">💼</div>
+        <div class="use-title">Job Portals</div>
+        <div class="use-desc">Match job seekers to openings semantically — go beyond keyword search on platforms</div>
+      </div>
+      <div class="use-card">
+        <div class="use-icon">🚀</div>
+        <div class="use-title">Startups</div>
+        <div class="use-desc">Fast talent acquisition without dedicated HR team — let AI filter top candidates</div>
+      </div>
+      <div class="use-card">
+        <div class="use-icon">🎓</div>
+        <div class="use-title">University Placement</div>
+        <div class="use-desc">Match graduating students to company job descriptions for campus recruitment drives</div>
+      </div>
+      <div class="use-card">
+        <div class="use-icon">🌐</div>
+        <div class="use-title">Freelance Platforms</div>
+        <div class="use-desc">Rank freelancer profiles against project requirements for better client-talent matching</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SLIDE 13: ADV/LIM/FUTURE ===== -->
+<div class="slide s13">
+  <div style="width:100%;max-width:960px">
+    <div class="slide-header animate-in" style="opacity:0">
+      <div class="slide-number">13 — Evaluation</div>
+      <h2 class="slide-main-title">Advantages, Limitations & <span class="grad-text">Future Scope</span></h2>
+    </div>
+    <div class="alf-grid animate-in" style="opacity:0">
+      <div class="alf-col alf-adv">
+        <div class="alf-title">✅ Advantages</div>
+        <div class="alf-item"><span class="alf-bullet">🧠</span>Semantic understanding beyond keyword matching — finds hidden talent</div>
+        <div class="alf-item"><span class="alf-bullet">💰</span>Zero OpenAI cost — runs 100% locally with open-source Sentence Transformers</div>
+        <div class="alf-item"><span class="alf-bullet">💾</span>Persistent ChromaDB — embeddings survive backend restarts</div>
+        <div class="alf-item"><span class="alf-bullet">🔐</span>Secure JWT auth with bcrypt password hashing</div>
+        <div class="alf-item"><span class="alf-bullet">📊</span>Real-time dashboard with live MongoDB data, not hardcoded</div>
+        <div class="alf-item"><span class="alf-bullet">🔌</span>Decoupled frontend/backend — independently deployable</div>
+      </div>
+      <div class="alf-col alf-lim">
+        <div class="alf-title">⚠️ Limitations</div>
+        <div class="alf-item"><span class="alf-bullet">🔤</span>Parser uses regex — may miss skills in unusual resume formats</div>
+        <div class="alf-item"><span class="alf-bullet">🔄</span>Resumes must be re-uploaded if ChromaDB is manually cleared</div>
+        <div class="alf-item"><span class="alf-bullet">📧</span>No email notifications for recruiter activity</div>
+        <div class="alf-item"><span class="alf-bullet">🔑</span>OpenAI parsing (more accurate) requires paid API credits</div>
+        <div class="alf-item"><span class="alf-bullet">📱</span>No mobile-responsive design (Streamlit limitation)</div>
+        <div class="alf-item"><span class="alf-bullet">☁️</span>Not yet containerized or cloud-deployed</div>
+      </div>
+      <div class="alf-col alf-fut">
+        <div class="alf-title">🚀 Future Enhancements</div>
+        <div class="alf-item"><span class="alf-bullet">🤖</span>GPT-4o parsing for 100% accurate resume extraction when credits available</div>
+        <div class="alf-item"><span class="alf-bullet">📧</span>Email notifications for new matches and uploads</div>
+        <div class="alf-item"><span class="alf-bullet">💬</span>Explainable AI — reason why each candidate scored high</div>
+        <div class="alf-item"><span class="alf-bullet">🌍</span>Multilingual resume support for global hiring</div>
+        <div class="alf-item"><span class="alf-bullet">🐳</span>Docker containerization + cloud deployment (AWS/GCP)</div>
+        <div class="alf-item"><span class="alf-bullet">📊</span>Advanced analytics — hiring trends, skill gap analysis</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SLIDE 14: CONCLUSION ===== -->
+<div class="slide s14">
+  <div class="s14-bg"></div>
+  <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:16px;width:100%;max-width:800px">
+    <div class="slide-number animate-in" style="opacity:0">14 — Conclusion</div>
+    <h2 class="slide-main-title animate-in" style="opacity:0;text-align:center">Project <span class="grad-text">Summary</span></h2>
+    <div class="concl-points animate-in" style="opacity:0">
+      <div class="concl-item"><span class="concl-check">✅</span>TalentSync automates resume screening using two-stage AI — vector search + reranking</div>
+      <div class="concl-item"><span class="concl-check">✅</span>Full-stack Python — Streamlit frontend + FastAPI backend, completely decoupled</div>
+      <div class="concl-item"><span class="concl-check">✅</span>Dual database — MongoDB Atlas for structured data + ChromaDB for vector embeddings</div>
+      <div class="concl-item"><span class="concl-check">✅</span>JWT-secured multi-recruiter system with public/private resume visibility</div>
+      <div class="concl-item"><span class="concl-check">✅</span>Runs 100% locally with open-source models — zero per-query API cost</div>
+    </div>
+    <div class="stack-badges animate-in" style="opacity:0">
+      <span class="stack-badge sb-teal">Streamlit</span>
+      <span class="stack-badge sb-cyan">FastAPI</span>
+      <span class="stack-badge sb-purple">MongoDB Atlas</span>
+      <span class="stack-badge sb-orange">ChromaDB</span>
+      <span class="stack-badge sb-green">Sentence Transformers</span>
+      <span class="stack-badge sb-cyan">CrossEncoder</span>
+      <span class="stack-badge sb-teal">JWT Auth</span>
+      <span class="stack-badge sb-purple">bcrypt</span>
+    </div>
+    <div class="thankyou animate-in" style="opacity:0">Thank You 🙏</div>
+    <p style="font-size:13px;color:var(--muted);text-align:center" class="animate-in" style="opacity:0">Questions & Discussion Welcome</p>
+  </div>
+</div>
+
+</div><!-- /.slide-deck -->
+
+<div class="nav-controls">
+  <button class="nav-btn" onclick="prevSlide()">←</button>
+  <span class="slide-counter"><span id="current">1</span> / <span id="total">14</span></span>
+  <button class="nav-btn" onclick="nextSlide()">→</button>
+</div>
+
+<script>
+let current = 1;
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+document.getElementById('total').textContent = total;
+
+function showSlide(n) {
+  if (n < 1) n = 1;
+  if (n > total) n = total;
+  slides.forEach((s, i) => {
+    s.classList.remove('active');
+    // Reset animations
+    s.querySelectorAll('.animate-in').forEach(el => {
+      el.style.opacity = '0';
+      el.style.animation = 'none';
+    });
+  });
+  current = n;
+  const activeSlide = slides[n - 1];
+  activeSlide.classList.add('active');
+  // Re-trigger animations
+  setTimeout(() => {
+    activeSlide.querySelectorAll('.animate-in').forEach(el => {
+      el.style.animation = '';
+    });
+  }, 10);
+  document.getElementById('current').textContent = n;
+  document.getElementById('progressBar').style.width = (n / total * 100) + '%';
+}
+
+function nextSlide() { showSlide(current + 1); }
+function prevSlide() { showSlide(current - 1); }
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextSlide(); }
+  if (e.key === 'ArrowLeft') { e.preventDefault(); prevSlide(); }
+});
+
+showSlide(1);
+</script>
+</body>
+</html>
