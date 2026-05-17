@@ -6,8 +6,9 @@ def auth_page():
     st.title("🔐 TalentSync – Recruiter Access")
 
     # Check if backend is reachable first
+    from frontend.api import BASE_URL
     try:
-        requests.get("http://127.0.0.1:8000/docs", timeout=2)
+        requests.get(f"{BASE_URL}/docs", timeout=5)
     except Exception:
         st.error("⚠️ Backend is not running. Please start it first:")
         st.code("python -m uvicorn main:app --reload --port 8000", language="bash")
